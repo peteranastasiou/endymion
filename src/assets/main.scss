@@ -38,27 +38,30 @@ a,
   }
 }
 
+$deboss-top-color: green;
+$deboss-left-color: red;
+$deboss-right-color: yellow;
+$deboss-bottom-color: orange;
+
 .deboss-panel {
   background: peachpuff;
   position: relative;
 
   box-shadow:
-    inset 10px 0 0 0 red,
-    inset -10px 0 0 0 yellow,
-    inset 0px 10px 0 0 darkgreen,
-    inset 0px -10px 0 0 orange;
+    inset 10px 0 0 0 $deboss-left-color,
+    inset -10px 0 0 0 $deboss-right-color,
+    inset 0px 10px 0 0 $deboss-top-color,
+    inset 0px -10px 0 0 $deboss-bottom-color;
 
   padding: 15px;
 }
-
-/* TODO use SCSS to simplify */
 
 .deboss-border-tl {
   position: absolute;
   inset: 0;
   pointer-events: none;
   clip-path: polygon(0px 0px, 10px 0px, 10px 10px);
-  background: black;
+  background: $deboss-top-color;
 }
 
 .deboss-border-tr {
@@ -69,7 +72,7 @@ a,
   height: 10px;
   pointer-events: none;
   clip-path: polygon(0px 0px, 10px 0px, 0px 10px);
-  background: black;
+  background: $deboss-top-color;
 }
 
 .deboss-border-bl {
@@ -80,7 +83,7 @@ a,
   height: 10px;
   pointer-events: none;
   clip-path: polygon(0px 10px, 10px 0px, 10px 10px);
-  background: black;
+  background: $deboss-bottom-color;
 }
 
 .deboss-border-br {
@@ -91,5 +94,5 @@ a,
   height: 10px;
   pointer-events: none;
   clip-path: polygon(0px 0px, 0px 10px, 10px 10px);
-  background: black;
+  background: $deboss-bottom-color;
 }
