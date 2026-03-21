@@ -1,13 +1,7 @@
 <template>
-  <header>
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <body>
+    <HelloWorld msg="You did it!" />
+  </body>
 </template>
 
 <script setup lang="ts">

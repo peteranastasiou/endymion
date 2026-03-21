@@ -1,11 +1,11 @@
 <template>
-  <div class="greetings">
+  <div class="deboss-panel">
+    <div class="deboss-border-tl"></div>
+    <div class="deboss-border-tr"></div>
+    <div class="deboss-border-bl"></div>
+    <div class="deboss-border-br"></div>
     <h1 class="green">{{ msg }}</h1>
-    <h3>
-      You’ve successfully created a project with
-      <a href="https://vite.dev/" target="_blank" rel="noopener">Vite</a> +
-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
-    </h3>
+    <h3>You’ve successfully created a project</h3>
   </div>
 </template>
 

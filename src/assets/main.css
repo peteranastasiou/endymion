@@ -7,6 +7,10 @@
   font-weight: normal;
 }
 
+body {
+  background-color: #c7dbdf;
+}
+
 a,
 .green {
   text-decoration: none;
@@ -32,4 +36,60 @@ a,
     grid-template-columns: 1fr 1fr;
     padding: 0 2rem;
   }
+}
+
+.deboss-panel {
+  background: peachpuff;
+  position: relative;
+
+  box-shadow:
+    inset 10px 0 0 0 red,
+    inset -10px 0 0 0 yellow,
+    inset 0px 10px 0 0 darkgreen,
+    inset 0px -10px 0 0 orange;
+
+  padding: 15px;
+}
+
+/* TODO use SCSS to simplify */
+
+.deboss-border-tl {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  clip-path: polygon(0px 0px, 10px 0px, 10px 10px);
+  background: black;
+}
+
+.deboss-border-tr {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  clip-path: polygon(0px 0px, 10px 0px, 0px 10px);
+  background: black;
+}
+
+.deboss-border-bl {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  clip-path: polygon(0px 10px, 10px 0px, 10px 10px);
+  background: black;
+}
+
+.deboss-border-br {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  clip-path: polygon(0px 0px, 0px 10px, 10px 10px);
+  background: black;
 }
