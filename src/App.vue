@@ -1,6 +1,6 @@
 <template>
   <body>
-    <HelloWorld msg="You did it!" />
+    <HelloWorld msg="Isolated Crypt" />
   </body>
 </template>
 
