@@ -1,40 +1,36 @@
 @use './deboss.scss';
 @import './base.css';
 
+body {
+  background-color: rgb(119, 197, 95);
+  display: flex;
+  place-items: center;
+}
+
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
   padding: 2rem;
   font-weight: normal;
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 80%;
+  max-width: 1024px;
+  margin: auto;
+  padding: 0 0;
 }
 
-body {
-  background-color: #79c07d;
-}
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+a {
+  background: rgb(151, 209, 133);
+  cursor: pointer;
+  padding: 1px;
 }
 
 @media (hover: hover) {
   a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+    background-color: rgb(163, 223, 144);
   }
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-}
+// @media (min-width: 1024px) {
+//   #app {
+//   }
+// }

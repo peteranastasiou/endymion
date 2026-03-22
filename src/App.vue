@@ -1,7 +1,5 @@
 <template>
-  <body>
-    <HelloWorld msg="Isolated Crypt" />
-  </body>
+  <HelloWorld msg="Isolated Crypt" />
 </template>
 
 <script setup lang="ts">
