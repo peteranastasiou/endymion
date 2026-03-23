@@ -1,7 +1,14 @@
-/*
- * Deboss panel styling
- */
+<template>
+  <div class="deboss-panel">
+    <div class="deboss-border-tl"></div>
+    <div class="deboss-border-tr"></div>
+    <div class="deboss-border-bl"></div>
+    <div class="deboss-border-br"></div>
+    <slot></slot>
+  </div>
+</template>
 
+<style lang="scss">
 $deboss-top-color: rgb(29, 71, 29);
 $deboss-left-color: rgb(13, 102, 36);
 $deboss-right-color: rgb(127, 209, 102);
@@ -19,9 +26,6 @@ $deboss-total-width: $deboss-width + $deboss-overlap;
   width: 100%;
   height: 100%;
   user-select: none;
-}
-
-.deboss-border {
   box-shadow:
     inset $deboss-width 0 0 0 $deboss-left-color,
     inset (-$deboss-width) 0 0 0 $deboss-right-color,
@@ -32,7 +36,7 @@ $deboss-total-width: $deboss-width + $deboss-overlap;
   padding: 15px;
 }
 
-.deboss-panel::before {
+.deboss-border-tl {
   content: '';
   position: absolute;
   inset: 0;
@@ -41,7 +45,7 @@ $deboss-total-width: $deboss-width + $deboss-overlap;
   background: $deboss-top-color;
 }
 
-.deboss-panel::after {
+.deboss-border-tr {
   content: '';
   position: absolute;
   top: 0;
@@ -53,7 +57,7 @@ $deboss-total-width: $deboss-width + $deboss-overlap;
   background: $deboss-top-color;
 }
 
-.deboss-border::before {
+.deboss-border-bl {
   content: '';
   position: absolute;
   bottom: 0;
@@ -65,7 +69,7 @@ $deboss-total-width: $deboss-width + $deboss-overlap;
   background: $deboss-bottom-color;
 }
 
-.deboss-border::after {
+.deboss-border-br {
   content: '';
   position: absolute;
   bottom: 0;
@@ -76,3 +80,4 @@ $deboss-total-width: $deboss-width + $deboss-overlap;
   clip-path: polygon($deboss-overlap 0px, 0px $deboss-width, $deboss-total-width $deboss-width);
   background: $deboss-bottom-color;
 }
+</style>

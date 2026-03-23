@@ -1,7 +1,7 @@
 <template>
-  <HelloWorld msg="Isolated Crypt" />
+  <RoomComponent />
 </template>
 
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import RoomComponent from './components/RoomComponent.vue';
 </script>
