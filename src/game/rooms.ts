@@ -17,7 +17,7 @@ export const rooms: Record<string, Room> = {
     describe() {
       return `You find yourself in a small crypt in the middle of a forest.
         It's cold and damp but feels somehow comfortable. <br>
-        There is a <a>round rock</a> in the corner.
+        There is a <a>round rock</a> in the corner. <br>
         The door of the crypt is to the <a>south</a>.`;
     },
     handleInput(action: Action) {

@@ -21,7 +21,8 @@ export type Verb =
   | 'West';
 
 export interface Action {
-  verb: Verb;
+  verb?: Verb;
   object?: string;
+  with?: string;
   withObject?: string;
 }

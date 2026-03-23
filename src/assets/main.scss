@@ -17,18 +17,6 @@ body {
   padding: 0 0;
 }
 
-a {
-  background: rgb(151, 209, 133);
-  cursor: pointer;
-  padding: 1px;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: rgb(163, 223, 144);
-  }
-}
-
 // @media (min-width: 1024px) {
 //   #app {
 //   }
