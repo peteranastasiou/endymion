@@ -2,7 +2,7 @@
  * Room definitions
  */
 
-import { actionInvalid, actionMatch, type Action } from './action';
+import { actionMatch, type Action } from './action';
 import { engine } from './engine';
 import { item, type ItemName } from './item';
 
@@ -13,9 +13,7 @@ export interface Room {
   dumpedItems?: ItemName[];
 }
 
-export type RoomName = 'isolatedCrypt' | 'graveyard';
-
-export const rooms: Record<RoomName, Room> = {
+export const rooms = {
   isolatedCrypt: {
     title: 'Isolated Crypt',
     describe() {
@@ -45,4 +43,6 @@ export const rooms: Record<RoomName, Room> = {
       }
     },
   },
-};
+} satisfies Record<string, Room>;
+
+export type RoomName = keyof typeof rooms;
