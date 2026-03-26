@@ -2,6 +2,7 @@ import { ref, type Ref } from 'vue';
 import { rooms, type Room, type RoomName } from './rooms';
 import { actionInvalid, type Action } from './action';
 import { isItem, itemPickedUp, type ItemName } from './item';
+import { conjunction } from './fmt';
 
 export namespace engine {
   let room: Ref<Room> = ref(rooms['isolatedCrypt']!);
@@ -15,7 +16,18 @@ export namespace engine {
       nextRoom = null;
     }
     // Refresh the room description every time
-    description.value = room.value.describe();
+    description.value = describeRoom();
+  }
+
+  function describeRoom(): string {
+    let res = room.value.describe();
+    if (room.value.dumpedItems?.length) {
+      res +=
+        '<br>Dumped on the ground there is ' +
+        conjunction(room.value.dumpedItems, '<a>%s</a>') +
+        '.';
+    }
+    return res;
   }
 
   export function getRoom(): Room {
@@ -36,12 +48,35 @@ export namespace engine {
   }
 
   export function addInventory(item: ItemName, msg?: string): string {
-    if (inv.value.includes(item)) {
+    if (isInInventory(item)) {
       return 'Its already on your person.';
     }
     inv.value = [...inv.value, item];
+
+    // Ensure it is marked as picked up
     itemPickedUp.add(item);
+
+    // If it was a dumped item, ensure that is removed too:
+    if (room.value.dumpedItems?.includes(item)) {
+      room.value.dumpedItems = room.value.dumpedItems.filter((e) => e != item);
+    }
+
     return msg ?? `You pick up the ${item}`;
+  }
+
+  function isInInventory(item: ItemName): boolean {
+    return inv.value.includes(item);
+  }
+
+  function removeInventory(item: ItemName) {
+    inv.value = inv.value.filter((e) => e != item);
+  }
+
+  function dumpItem(item: ItemName) {
+    if (!room.value.dumpedItems) {
+      room.value.dumpedItems = [];
+    }
+    room.value.dumpedItems.push(item);
   }
 
   export function getInventoryRef(): Ref<string[]> {
@@ -65,13 +100,21 @@ export namespace engine {
     }
 
     // Fall through to default handlers:
-    if (action.verb == 'Pick up') {
-      const item = action.object?.toLowerCase();
-      if (isItem(item)) {
+    const item = action.object?.toLowerCase();
+    if (isItem(item)) {
+      if (action.verb == 'Pick up') {
         return addInventory(item);
       }
+      if (action.verb == 'Drop') {
+        if (isInInventory(item)) {
+          dumpItem(item);
+          removeInventory(item);
+          return `You dump the ${item}`;
+        } else {
+          return "You aren't holding it";
+        }
+      }
     }
-
     // Unhandled:
     return actionInvalid(action);
   }

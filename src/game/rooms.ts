@@ -4,12 +4,13 @@
 
 import { actionInvalid, actionMatch, type Action } from './action';
 import { engine } from './engine';
-import { item } from './item';
+import { item, type ItemName } from './item';
 
 export interface Room {
   title: string;
   describe(): string;
   handleInput?(action: Action): string | undefined;
+  dumpedItems?: ItemName[];
 }
 
 export type RoomName = 'isolatedCrypt' | 'graveyard';

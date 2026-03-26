@@ -4,16 +4,15 @@ export function capitalise(s: string): string {
   return s[0]?.toUpperCase() + s.slice(1);
 }
 
-export function conjunction(list: string[], prefix?: string, suffix?: string): string {
+export function conjunction(list: string[], format?: string): string {
   if (list.length == 0) return '';
 
-  const res = listize_(list);
-  return (prefix ?? '') + res + (suffix ?? '');
-}
-
-function listize_(list: string[]): string {
-  if (list.length == 1) {
-    return list[0]!;
+  if (format) {
+    list = list.map((e) => format.replace('%s', e));
   }
-  return list.slice(0, -1).join(', ') + ' and ' + list.slice(-1);
+
+  if (list.length == 1) {
+    return 'a ' + list[0];
+  }
+  return 'a ' + list.slice(0, -1).join(', a ') + ' and a ' + list.slice(-1);
 }
