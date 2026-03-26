@@ -4,7 +4,9 @@
     <div class="deboss-border-tr"></div>
     <div class="deboss-border-bl"></div>
     <div class="deboss-border-br"></div>
-    <slot></slot>
+    <div class="deboss-content">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
@@ -18,6 +20,11 @@ $deboss-width: 5px;
 $deboss-overlap: 2px;
 $deboss-shadow-len: 4px;
 $deboss-total-width: $deboss-width + $deboss-overlap;
+
+.deboss-content {
+  display: flex;
+  flex-direction: column;
+}
 
 .deboss-panel {
   background: rgb(111, 190, 87);

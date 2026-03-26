@@ -1,38 +1,42 @@
 <script setup lang="ts">
 import TextBox from './TextBox.vue';
-import { rooms, type Room } from '@/game/rooms';
-import { reactive } from 'vue';
-import { type Action, Verb } from '../game/action';
+import type { Action, Verb } from '@/game/action';
+import { reactive, computed } from 'vue';
+import { engine } from '@/game/engine';
+import { capitalise } from '../game/fmt';
 
+// Current room reference and derived state
+const room = engine.getRoomRef();
+const title = computed(() => room.value.title);
+const description = engine.getDescriptionRef();
+
+const inventory = engine.getInventoryRef();
+
+// TODO preview output on hover, clear on hover-off
+
+// UI state
 enum InputState {
   VERB = 'verb',
   OBJECT = 'object',
   WITH_OBJECT = 'with-object',
 }
 
-interface State {
-  room: Room;
+interface GameState {
   inputState: InputState;
   output: string;
   action: Action;
 }
 
-const state = reactive<State>({
-  room: rooms['isolatedCrypt']!,
+const state = reactive<GameState>({
   inputState: InputState.VERB,
   output: '',
   action: {},
 });
 
-const title = state.room.title;
-const description = state.room.describe();
-
-// TODO preview output on hover, clear on hover-off
-
 function verbClick(name: string) {
   state.output = '';
   const verb = name as Verb;
-  if (verb === state.action.verb) {
+  if (state.inputState != InputState.VERB && verb === state.action.verb) {
     // Special case: clear action
     state.action = {};
     state.inputState = InputState.VERB;
@@ -55,17 +59,25 @@ function nounClick(name: string) {
     if (!state.action.object) {
       state.action.object = name;
       if (!state.action.with) {
-        // Fire off action here
+        state.output = engine.handleInput(state.action);
         state.inputState = InputState.VERB;
       } else if (state.action.verb == 'Use') {
-        // Fire off tentative action here - user may want to "use with"
+        // TODO Fire off tentative action here - user may want to "use with"
       }
     } else {
       state.action.withObject = name;
+      state.output = engine.handleInput(state.action);
       state.inputState = InputState.VERB;
     }
   }
 }
+
+// Initial update
+engine.update();
+
+/**
+ * TODO split into 4 components for the different parts
+ */
 </script>
 
 <template>
@@ -79,13 +91,15 @@ function nounClick(name: string) {
       <h2>{{ title }}</h2>
     </TextBox>
     <TextBox class="output">
-      <p style="height: 24px">
-        {{ state.action.verb }} {{ state.action.object }}
+      <p style="height: 48px">
+        ➤ {{ state.action.verb }} {{ state.action.object }}
         {{
           state.action.object && state.action.with
             ? `${state.action.with} ${state.action.withObject ?? ''}`
             : ''
         }}
+        <br />
+        {{ state.output }}
       </p>
     </TextBox>
     <TextBox class="verbs" @clicked="verbClick" linkEnabled>
@@ -98,13 +112,17 @@ function nounClick(name: string) {
         <p><a>Push</a></p>
         <p><a>Close</a></p>
         <p><a>Drop</a></p>
+        <p><a>Pull</a></p>
         <p><a>Talk to</a></p>
+        <p><a>Go</a></p>
+        <p><a>Attack</a></p>
       </div>
     </TextBox>
     <TextBox class="inventory" @clicked="nounClick" :linkEnabled="state.inputState === 'object'">
       <div class="inventory-container">
-        <p><a>Shrunken head</a></p>
-        <p><a>Dirk</a></p>
+        <p v-for="item in inventory">
+          <a>{{ capitalise(item) }}</a>
+        </p>
       </div>
     </TextBox>
   </div>
