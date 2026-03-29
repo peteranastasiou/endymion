@@ -10,7 +10,6 @@ export interface Room {
   title: string;
   describe(): string;
   handleInput?(action: Action): string | undefined;
-  dumpedItems?: ItemName[];
 }
 
 export const rooms = {

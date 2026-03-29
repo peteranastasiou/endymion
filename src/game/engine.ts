@@ -1,11 +1,13 @@
-import { ref, type Ref } from 'vue';
+import { computed, ref, type Ref } from 'vue';
 import { rooms, type Room, type RoomName } from './rooms';
 import { actionInvalid, type Action } from './action';
-import { isItem, itemPickedUp, type ItemName } from './item';
+import { dumpItem, getDumpedItems, isItem, setItemPickedUp, type ItemName } from './item';
 import { conjunction } from './fmt';
+import { load, save } from './state';
 
 export namespace engine {
-  let room: Ref<Room> = ref(rooms['isolatedCrypt']!);
+  let roomName: Ref<RoomName> = ref('isolatedCrypt');
+  let room: Ref<Room> = computed(() => rooms[roomName.value]);
   let inv: Ref<ItemName[]> = ref(['shrunken head', 'dirk']);
   let nextRoom: Room | null = null;
   let description: Ref<string> = ref('');
@@ -21,11 +23,9 @@ export namespace engine {
 
   function describeRoom(): string {
     let res = room.value.describe();
-    if (room.value.dumpedItems?.length) {
-      res +=
-        '<br>Dumped on the ground there is ' +
-        conjunction(room.value.dumpedItems, '<a>%s</a>') +
-        '.';
+    const dumped = getDumpedItems(roomName.value);
+    if (dumped.length) {
+      res += '<br>Lying on the ground there is ' + conjunction(dumped, '<a>%s</a>') + '.';
     }
     return res;
   }
@@ -52,16 +52,23 @@ export namespace engine {
       return 'Its already on your person.';
     }
     inv.value = [...inv.value, item];
+    saveInventoryState();
 
     // Ensure it is marked as picked up
-    itemPickedUp.add(item);
-
-    // If it was a dumped item, ensure that is removed too:
-    if (room.value.dumpedItems?.includes(item)) {
-      room.value.dumpedItems = room.value.dumpedItems.filter((e) => e != item);
-    }
+    setItemPickedUp(item, roomName.value);
 
     return msg ?? `You pick up the ${item}`;
+  }
+
+  export function saveInventoryState() {
+    save('inv', inv.value);
+  }
+
+  export function restoreInventoryState() {
+    const value = load('inv');
+    if (value !== null) {
+      inv.value = value;
+    }
   }
 
   function isInInventory(item: ItemName): boolean {
@@ -70,13 +77,7 @@ export namespace engine {
 
   function removeInventory(item: ItemName) {
     inv.value = inv.value.filter((e) => e != item);
-  }
-
-  function dumpItem(item: ItemName) {
-    if (!room.value.dumpedItems) {
-      room.value.dumpedItems = [];
-    }
-    room.value.dumpedItems.push(item);
+    saveInventoryState();
   }
 
   export function getInventoryRef(): Ref<string[]> {
@@ -107,7 +108,7 @@ export namespace engine {
       }
       if (action.verb == 'Drop') {
         if (isInInventory(item)) {
-          dumpItem(item);
+          dumpItem(item, roomName.value);
           removeInventory(item);
           return `You dump the ${item}`;
         } else {
