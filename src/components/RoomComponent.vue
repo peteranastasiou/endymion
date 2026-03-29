@@ -4,13 +4,14 @@ import type { Action, Verb } from '@/game/action';
 import { reactive, computed } from 'vue';
 import { engine } from '@/game/engine';
 import { capitalise } from '../game/fmt';
+import { getInventoryRef } from '@/game/inventory';
 
 // Current room reference and derived state
 const room = engine.getRoomRef();
 const title = computed(() => room.value.title);
 const description = engine.getDescriptionRef();
 
-const inventory = engine.getInventoryRef();
+const inventory = getInventoryRef();
 
 // TODO preview output on hover, clear on hover-off
 

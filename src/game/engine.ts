@@ -3,19 +3,21 @@ import { rooms, type Room, type RoomName } from './rooms';
 import { actionInvalid, type Action } from './action';
 import { dumpItem, getDumpedItems, isItem, setItemPickedUp, type ItemName } from './item';
 import { conjunction } from './fmt';
-import { load, save } from './state';
+import { load, save } from './persistence';
+import { addInventory, isInInventory, removeInventory } from './inventory';
 
 export namespace engine {
   let roomName: Ref<RoomName> = ref('isolatedCrypt');
   let room: Ref<Room> = computed(() => rooms[roomName.value]);
-  let inv: Ref<ItemName[]> = ref(['shrunken head', 'dirk']);
-  let nextRoom: Room | null = null;
+  let nextRoom: RoomName | null = null;
   let description: Ref<string> = ref('');
 
   export function update(): void {
     if (nextRoom) {
-      room.value = nextRoom;
+      roomName.value = nextRoom;
+      console.info(`Move to next room: ${roomName.value} ${room.value.title}`);
       nextRoom = null;
+      saveRoomState();
     }
     // Refresh the room description every time
     description.value = describeRoom();
@@ -25,9 +27,13 @@ export namespace engine {
     let res = room.value.describe();
     const dumped = getDumpedItems(roomName.value);
     if (dumped.length) {
-      res += '<br>Lying on the ground there is ' + conjunction(dumped, '<a>%s</a>') + '.';
+      res.push('Lying on the ground there is ' + conjunction(dumped, '<a>%s</a>') + '.');
     }
-    return res;
+    return res.filter((s) => s).join('<br>');
+  }
+
+  export function getRoomName(): RoomName {
+    return roomName.value;
   }
 
   export function getRoom(): Room {
@@ -44,44 +50,18 @@ export namespace engine {
 
   export function setNextRoom(roomName: RoomName) {
     console.info(`Next room is ${roomName}`);
-    nextRoom = rooms[roomName]!;
+    nextRoom = roomName;
   }
 
-  export function addInventory(item: ItemName, msg?: string): string {
-    if (isInInventory(item)) {
-      return 'Its already on your person.';
+  export function saveRoomState() {
+    save('currentRoom', roomName.value);
+  }
+
+  export function restoreRoomState() {
+    const currRoom = load('currentRoom') as RoomName;
+    if (currRoom) {
+      roomName.value = currRoom;
     }
-    inv.value = [...inv.value, item];
-    saveInventoryState();
-
-    // Ensure it is marked as picked up
-    setItemPickedUp(item, roomName.value);
-
-    return msg ?? `You pick up the ${item}`;
-  }
-
-  export function saveInventoryState() {
-    save('inv', inv.value);
-  }
-
-  export function restoreInventoryState() {
-    const value = load('inv');
-    if (value !== null) {
-      inv.value = value;
-    }
-  }
-
-  function isInInventory(item: ItemName): boolean {
-    return inv.value.includes(item);
-  }
-
-  function removeInventory(item: ItemName) {
-    inv.value = inv.value.filter((e) => e != item);
-    saveInventoryState();
-  }
-
-  export function getInventoryRef(): Ref<string[]> {
-    return inv;
   }
 
   export function handleInput(action: Action): string {

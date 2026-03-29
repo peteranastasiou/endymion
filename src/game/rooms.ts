@@ -8,7 +8,7 @@ import { item, type ItemName } from './item';
 
 export interface Room {
   title: string;
-  describe(): string;
+  describe(): string[];
   handleInput?(action: Action): string | undefined;
 }
 
@@ -16,12 +16,12 @@ export const rooms = {
   isolatedCrypt: {
     title: 'Isolated Crypt',
     describe() {
-      return (
+      return [
         `You find yourself in a small crypt in the middle of a forest.
-        It's cold and damp but feels somehow comfortable. ` +
-        item('round rock', 'There is a %s in the corner.') +
-        `The door of the crypt is to the <a>south</a>.`
-      );
+        It's cold and damp but feels somehow comfortable. `,
+        item('round rock', 'There is a %s in the corner.'),
+        'The door of the crypt is to the <a>south</a>.',
+      ];
     },
     handleInput(a: Action) {
       if (actionMatch(a, 'Go', 'south')) {
@@ -33,7 +33,11 @@ export const rooms = {
   graveyard: {
     title: 'Graveyard',
     describe() {
-      return 'You are in the graveyard.<br>An isolated crypt lies to the <a>north</a>';
+      return [
+        'You are in the graveyard.',
+        item('lantern', 'A %s lies in the grey grass.'),
+        'An isolated crypt lies to the <a>north</a>.',
+      ];
     },
     handleInput(a: Action) {
       if (actionMatch(a, 'Go', 'north')) {

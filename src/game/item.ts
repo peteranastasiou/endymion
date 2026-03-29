@@ -1,15 +1,18 @@
 import { capitalise } from './fmt';
 import { type RoomName } from './rooms';
-import { load, save } from './state';
+import { load, save } from './persistence';
 
-/**
- * Define item behaviour here
- */
+interface Item {
+  describe?(): string;
+  isUsable?: boolean;
+}
+
 const items = {
   'round rock': {},
   'shrunken head': {},
+  lantern: { isUsable: true },
   dirk: {},
-};
+} satisfies Record<string, Item>;
 
 export type ItemName = keyof typeof items;
 
@@ -30,14 +33,13 @@ export function getDumpedItems(roomName: RoomName): ItemName[] {
 }
 
 export function dumpItem(item: ItemName, roomName: RoomName) {
-  console.log('dump Item:', item);
+  console.info('dump Item:', item);
   const items = itemsDumped.get(roomName);
   if (items) {
     items.push(item);
   } else {
     itemsDumped.set(roomName, [item]);
   }
-  console.log(itemsDumped);
 
   // State changed, save it
   saveItemState();
@@ -93,8 +95,8 @@ export function item(name: ItemName, desc: string): string {
 
   // Format
   if (desc.includes('%S')) {
-    return '<br>' + desc.replace('%S', `<a>${capitalise(name)}</a>`) + '<br>';
+    return desc.replace('%S', `<a>${capitalise(name)}</a>`);
   } else {
-    return '<br>' + desc.replace('%s', `<a>${name}</a>`) + '<br>';
+    return desc.replace('%s', `<a>${name}</a>`);
   }
 }

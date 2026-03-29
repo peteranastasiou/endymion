@@ -1,5 +1,3 @@
-import { engine } from './engine';
-import { restoreItemState, saveItemState } from './item';
 // Game State is:
 // - room[].dumpedItems
 // - inventory
@@ -7,20 +5,9 @@ import { restoreItemState, saveItemState } from './item';
 // - current room name
 // - state flags
 
-type SaveKey = 'inv' | 'itemPickedUp' | 'flags' | 'currentRoom' | 'dumped';
+type SaveKey = 'slot' | 'inv' | 'itemPickedUp' | 'flags' | 'currentRoom' | 'dumped';
 
-export function init() {
-  // TODO set new game state
-}
-
-// Restore previously stored state
-export function restore(): void {
-  console.info('Restoring...');
-  restoreItemState();
-  engine.restoreInventoryState();
-}
-
-export function save(key: SaveKey, value: object) {
+export function save(key: SaveKey, value: any) {
   const str = JSON.stringify(value);
   console.info(`Saving [${key}]: ${str}`);
   localStorage.setItem(key, str);
@@ -36,5 +23,11 @@ export function load(key: SaveKey) {
     const val = JSON.parse(str);
     console.info(val);
     return val;
+  }
+}
+
+export function clear() {
+  for (const key of ['slot', 'inv', 'itemPickedUp', 'flags', 'currentRoom', 'dumped']) {
+    localStorage.removeItem(key);
   }
 }
